@@ -105,6 +105,7 @@
     <Compile Include="GammaToneCurve.cs" />
     <Compile Include="ICCBinaryReader.cs" />
     <Compile Include="ICCProfileException.cs" />
+    <Compile Include="ScreenPowerMgmt.cs" />
     <Compile Include="SrgbEOTF.cs" />
     <Compile Include="ToneCurve.cs" />
     <Page Include="AboutWindow.xaml" />

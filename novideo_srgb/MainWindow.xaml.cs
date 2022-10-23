@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Interop;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.Forms.MessageBox;
 
@@ -14,6 +15,10 @@ namespace novideo_srgb
         private readonly MainViewModel _viewModel;
 
         private ContextMenu _contextMenu;
+
+        private bool _closeFromContextMenu;
+
+        ScreenPowerMgmt _screenPowerMgmt = new ScreenPowerMgmt();
 
         public MainWindow()
         {
@@ -29,13 +34,14 @@ namespace novideo_srgb
             SystemEvents.DisplaySettingsChanged += _viewModel.OnDisplaySettingsChanged;
             SystemEvents.PowerModeChanged += _viewModel.OnPowerModeChanged;
 
+            _screenPowerMgmt.Register(new WindowInteropHelper(this).EnsureHandle());
+            _screenPowerMgmt.ScreenPower += _viewModel.OnScreenPower;
             var args = Environment.GetCommandLineArgs().ToList();
             args.RemoveAt(0);
 
             if (args.Contains("-minimize"))
             {
-                WindowState = WindowState.Minimized;
-                Hide();
+                Minize();
             }
 
             InitializeTrayIcon();
@@ -49,6 +55,12 @@ namespace novideo_srgb
             }
 
             base.OnStateChanged(e);
+        }
+
+        private void Minize()
+        {
+            WindowState = WindowState.Minimized;
+            Hide();
         }
 
         private void AboutButton_Click(object sender, RoutedEventArgs o)
@@ -142,7 +154,7 @@ namespace novideo_srgb
             var exitItem = new MenuItem();
             _contextMenu.MenuItems.Add(exitItem);
             exitItem.Text = "Exit";
-            exitItem.Click += delegate { Close(); };
+            exitItem.Click += delegate { _closeFromContextMenu = true;  Close(); };
         }
 
         private void ReapplyMonitorSettings()
@@ -150,6 +162,19 @@ namespace novideo_srgb
             foreach (var monitor in _viewModel.Monitors)
             {
                 monitor.ReapplyClamp();
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            _viewModel.UpdateMonitors();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = !_closeFromContextMenu;
+            if (e.Cancel) {
+                Minize();
             }
         }
     }

@@ -29,8 +29,6 @@ namespace novideo_srgb
             _startupKey = Registry.CurrentUser.OpenSubKey
                 ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             _startupValue = Application.ExecutablePath + " -minimize";
-
-            UpdateMonitors();
         }
 
         public bool? RunAtStartup
@@ -64,7 +62,7 @@ namespace novideo_srgb
             }
         }
 
-        private void UpdateMonitors()
+        public void UpdateMonitors()
         {
             Monitors.Clear();
             List<XElement> config = null;
@@ -121,6 +119,12 @@ namespace novideo_srgb
         {
             if (e.Mode != PowerModes.Resume) return;
             OnDisplaySettingsChanged(null, null);
+        }
+
+        public void OnScreenPower(object sender, ScreenPowerMgmtEventArgs e)
+        {
+            if (e.PowerStatus == PowerMgmt.On)
+                OnDisplaySettingsChanged(null, null);
         }
 
         public void SaveConfig()

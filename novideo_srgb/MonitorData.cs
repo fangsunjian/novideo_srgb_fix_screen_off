@@ -83,7 +83,10 @@ namespace novideo_srgb
 
             if (!doClamp) return;
 
-            if (_clamped) Thread.Sleep(100);
+            while (_clamped && Novideo.IsColorSpaceConversionActive(_output)) {
+                Thread.Sleep(100);
+            }
+
             if (UseEdid)
                 Novideo.SetColorSpaceConversion(_output, Colorimetry.RGBToRGB(TargetColorSpace, EdidColorSpace));
             else if (UseIcc)

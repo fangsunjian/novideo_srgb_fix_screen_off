@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:novideo_srgb"
         ResizeMode="CanMinimize"
         mc:Ignorable="d"
-        Title="Novideo sRGB" Height="320" Width="500" MinHeight="150" MinWidth="300">
+        Title="Novideo sRGB" Height="320" Width="500" MinHeight="150" MinWidth="300" Loaded="Window_Loaded" Closing="Window_Closing">
     <Window.DataContext>
         <local:MainViewModel />
     </Window.DataContext>
