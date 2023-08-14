@@ -117,8 +117,8 @@ namespace novideo_srgb
             notifyIcon.MouseDoubleClick +=
                 delegate
                 {
-                    Show();
                     WindowState = WindowState.Normal;
+                    Show();
                 };
 
             _contextMenu = new ContextMenu();
